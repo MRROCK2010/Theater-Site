@@ -345,77 +345,135 @@ body{
 #ctrl-hint.on{display:block;}
 
 /* ── MOBILE CONTROLS ── */
+
+/* D-PAD — bottom left */
 #dpad-wrap{
   position:fixed;
-  bottom:calc(var(--safe-b)+14px);
-  left:calc(var(--safe-l)+8px);
-  display:none;z-index:60;
-  width:150px;
-  height:150px;
+  bottom:24px;
+  left:16px;
+  width:153px;
+  height:153px;
+  display:none;
+  z-index:60;
+  /* Support safe areas without breaking fallback */
+  bottom:max(24px, calc(env(safe-area-inset-bottom, 0px) + 16px));
+  left:max(16px, calc(env(safe-area-inset-left, 0px) + 8px));
 }
-#dpad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,48px);gap:3px;width:150px;height:150px;}
+#dpad{
+  position:relative;
+  width:153px;
+  height:153px;
+}
 .dpad-btn{
-  background:rgba(10,10,24,.88);
-  border:1px solid rgba(212,168,90,.22);
-  border-radius:10px;
-  color:rgba(212,168,90,.88);
-  font-size:18px;
+  position:absolute;
+  width:50px;height:50px;
+  background:rgba(10,10,24,.82);
+  border:1px solid rgba(212,168,90,.28);
+  border-radius:12px;
+  color:rgba(212,168,90,.9);
+  font-size:20px;
   cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   user-select:none;-webkit-user-select:none;
   transition:background .1s,transform .1s;
   touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  backdrop-filter:blur(6px);
 }
-.dpad-btn:active{background:rgba(212,168,90,.15);transform:scale(.9);}
-#ebtn{
+.dpad-btn:active{background:rgba(212,168,90,.22);transform:scale(.88);}
+.dpad-btn[data-dir="up"]   { top:0;    left:52px; }
+.dpad-btn[data-dir="left"] { top:52px; left:0;    }
+.dpad-btn[data-dir="down"] { top:104px;left:52px; }
+.dpad-btn[data-dir="right"]{ top:52px; left:104px;}
+
+/* ACTION BUTTONS — bottom right, each on its own fixed position */
+
+/* E / Interact — primary action, bottom-right corner */
+#ebtn-wrap{
   position:fixed;
-  bottom:calc(var(--safe-b)+14px);
-  right:calc(var(--safe-r)+14px);
-  width:58px;height:58px;
-  background:rgba(212,168,90,.12);
-  border:1px solid rgba(212,168,90,.38);
+  bottom:24px;
+  right:16px;
+  bottom:max(24px, calc(env(safe-area-inset-bottom, 0px) + 16px));
+  right:max(16px, calc(env(safe-area-inset-right, 0px) + 8px));
+  z-index:60;
+  display:none;
+}
+#ebtn-wrap.show{display:block;}
+#ebtn{
+  width:62px;height:62px;
+  background:rgba(212,168,90,.14);
+  border:1.5px solid rgba(212,168,90,.45);
   border-radius:50%;
   color:var(--gold);
-  font-family:'Jost',sans-serif;font-size:.75rem;font-weight:600;
-  cursor:pointer;z-index:60;
-  display:none;align-items:center;justify-content:center;
-  flex-direction:column;gap:1px;
+  font-family:'Jost',sans-serif;font-size:.78rem;font-weight:600;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:2px;
   -webkit-user-select:none;
   letter-spacing:.04em;
   touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 18px rgba(212,168,90,.12);
 }
-#ebtn span{font-size:.52rem;opacity:.65;}
-#ebtn:active{background:rgba(212,168,90,.25);transform:scale(.92);}
+#ebtn span{font-size:.5rem;opacity:.7;letter-spacing:.06em;text-transform:uppercase;}
+#ebtn:active{background:rgba(212,168,90,.28);transform:scale(.9);}
 
-/* Mobile secondary buttons */
+/* Note button — above interact button */
+#m-note-btn-wrap{
+  position:fixed;
+  bottom:104px;
+  right:28px;
+  bottom:max(104px, calc(env(safe-area-inset-bottom, 0px) + 96px));
+  right:max(28px, calc(env(safe-area-inset-right, 0px) + 20px));
+  z-index:60;
+  display:none;
+}
+#m-note-btn-wrap.show{display:block;}
 #m-note-btn{
-  position:fixed;
-  bottom:calc(var(--safe-b)+14px);
-  right:calc(var(--safe-r)+84px);
-  width:44px;height:44px;
-  background:rgba(232,160,180,.12);
-  border:1px solid rgba(232,160,180,.35);
+  width:48px;height:48px;
+  background:rgba(232,160,180,.13);
+  border:1.5px solid rgba(232,160,180,.4);
   border-radius:50%;
-  color:var(--rose);font-size:1rem;
-  cursor:pointer;z-index:60;
-  display:none;align-items:center;justify-content:center;
+  color:var(--rose);font-size:1.1rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
   touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 14px rgba(232,160,180,.1);
 }
-#m-note-btn:active{background:rgba(232,160,180,.25);}
+#m-note-btn:active{background:rgba(232,160,180,.28);transform:scale(.9);}
+
+/* Photo button — to the left of note button */
+#m-photo-btn-wrap{
+  position:fixed;
+  bottom:108px;
+  right:90px;
+  bottom:max(108px, calc(env(safe-area-inset-bottom, 0px) + 100px));
+  right:max(90px, calc(env(safe-area-inset-right, 0px) + 82px));
+  z-index:60;
+  display:none;
+}
+#m-photo-btn-wrap.show{display:block;}
 #m-photo-btn{
-  position:fixed;
-  bottom:calc(var(--safe-b)+64px);
-  right:calc(var(--safe-r)+84px);
-  width:40px;height:40px;
+  width:44px;height:44px;
   background:rgba(176,196,248,.1);
-  border:1px solid rgba(176,196,248,.3);
+  border:1.5px solid rgba(176,196,248,.35);
   border-radius:50%;
-  color:var(--lav);font-size:.9rem;
-  cursor:pointer;z-index:60;
-  display:none;align-items:center;justify-content:center;
+  color:var(--lav);font-size:1rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
   touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  backdrop-filter:blur(8px);
+  box-shadow:0 0 14px rgba(176,196,248,.08);
 }
-#m-photo-btn:active{background:rgba(176,196,248,.22);}
+#m-photo-btn:active{background:rgba(176,196,248,.24);transform:scale(.9);}
+
+/* Legacy wrapper kept for JS compat but hidden */
+#mobile-actions{display:none !important;}
+#m-btns-row{display:none !important;}
 
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 </style>
@@ -597,10 +655,22 @@ body{
 </div>
 
 <!-- MOBILE CONTROLS -->
+<!-- D-Pad: bottom-left -->
 <div id="dpad-wrap"><div id="dpad"></div></div>
-<button id="ebtn"><div>E</div><span>interact</span></button>
-<button id="m-note-btn" onclick="openNoteOverlay()">💌</button>
-<button id="m-photo-btn" onclick="tryTakePhoto()">📸</button>
+
+<!-- Action buttons: bottom-right, individually positioned -->
+<div id="ebtn-wrap">
+  <button id="ebtn"><div>E</div><span>interact</span></button>
+</div>
+<div id="m-note-btn-wrap">
+  <button id="m-note-btn" onclick="openNoteOverlay()">💌</button>
+</div>
+<div id="m-photo-btn-wrap">
+  <button id="m-photo-btn" onclick="tryTakePhoto()">📸</button>
+</div>
+
+<!-- Legacy container kept for JS compat (hidden via CSS) -->
+<div id="mobile-actions"><div id="m-btns-row"></div></div>
 
 <script>
 'use strict';
@@ -1550,24 +1620,29 @@ function loop(){update();render();requestAnimationFrame(loop);}
 // ═══════════════════════════════════════════════════════════
 function injectDpad(){
   const wrap=document.getElementById('dpad-wrap'),dpad=document.getElementById('dpad');
-  [{r:0,c:1,dir:'up',sym:'↑'},{r:1,c:0,dir:'left',sym:'←'},{r:1,c:2,dir:'right',sym:'→'},{r:2,c:1,dir:'down',sym:'↓'}].forEach(b=>{
-    const el=document.createElement('button');el.className='dpad-btn';el.textContent=b.sym;el.style.gridColumn=b.c+1;el.style.gridRow=b.r+1;
+  [{dir:'up',sym:'↑'},{dir:'left',sym:'←'},{dir:'right',sym:'→'},{dir:'down',sym:'↓'}].forEach(b=>{
+    const el=document.createElement('button');
+    el.className='dpad-btn';
+    el.textContent=b.sym;
+    el.setAttribute('data-dir',b.dir);
     el.addEventListener('touchstart',e=>{e.preventDefault();MK[b.dir]=true;},{passive:false});
-    el.addEventListener('touchend',()=>MK[b.dir]=false);
+    el.addEventListener('touchend',e=>{e.preventDefault();MK[b.dir]=false;},{passive:false});
     el.addEventListener('touchcancel',()=>MK[b.dir]=false);
     el.addEventListener('mousedown',()=>MK[b.dir]=true);
     el.addEventListener('mouseup',()=>MK[b.dir]=false);
+    el.addEventListener('mouseleave',()=>MK[b.dir]=false);
     dpad.appendChild(el);
   });
   wrap.style.display='block';
-  document.getElementById('ebtn').style.display='flex';
-  document.getElementById('m-note-btn').style.display='flex';
-  document.getElementById('m-photo-btn').style.display='flex';
-  document.getElementById('ebtn').addEventListener('touchstart',e=>{e.preventDefault();interact();},{passive:false});
-  document.getElementById('ebtn').addEventListener('click',interact);
-  // Minimap - reposition above dpad on mobile
-  document.getElementById('minimap').style.bottom='120px';
-  document.getElementById('minimap').style.right='80px';
+  document.getElementById('ebtn-wrap').classList.add('show');
+  document.getElementById('m-note-btn-wrap').classList.add('show');
+  document.getElementById('m-photo-btn-wrap').classList.add('show');
+  const ebtn=document.getElementById('ebtn');
+  ebtn.addEventListener('touchstart',e=>{e.preventDefault();interact();},{passive:false});
+  ebtn.addEventListener('click',interact);
+  // Minimap — above action buttons
+  document.getElementById('minimap').style.bottom='200px';
+  document.getElementById('minimap').style.right='16px';
 }
 
 // Keyboard shortcuts for lobby inputs
