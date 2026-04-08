@@ -234,9 +234,7 @@ body{
   white-space:nowrap;
 }
 #mv-sit-msg.show{display:block;}
-.mv-ui{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.88));padding:max(16px,var(--safe-b)) 20px 18px;display:flex;align-items:center;justify-content:space-between;font-size:.75rem;color:rgba(255,255,255,.5);}
-.mv-badge{display:flex;align-items:center;gap:7px;}
-.mv-dot{width:5px;height:5px;border-radius:50%;background:var(--rose);animation:pulse 2s infinite;}
+
 
 /* ── HUD ── */
 #hud{
@@ -561,10 +559,6 @@ body{
   <video id="mvvid" autoplay playsinline muted></video>
   <button class="mv-close" onclick="closeMv()">✕</button>
   <div id="mv-sit-msg">🎬 Sit down to watch together</div>
-  <div class="mv-ui">
-    <div class="mv-badge"><div class="mv-dot"></div><span id="mv-who">Watching together</span></div>
-    <span id="mv-hint">Esc to close · Tap to reveal ✕</span>
-  </div>
 </div>
 
 <!-- HUD -->
@@ -986,8 +980,7 @@ document.getElementById('mv').addEventListener('touchstart',function(e){
   showMvClose();
 },{passive:true});
 function updateMvWho(){
-  const both=G.me.sitting&&G.partner.sitting;
-  document.getElementById('mv-who').textContent=both?`${G.me.name} & ${G.partner.name} 🎬 watching`:'🎬 Now sharing';
+  // mv-who element removed; nothing to update
 }
 async function toggleShare(){
   if(!G.isHost&&!G.demoMode){toast('Only the host can share screen');return;}
