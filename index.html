@@ -217,11 +217,30 @@ body{
 /* ── SCREEN SHARE (fullscreen) ── */
 #mv{position:fixed;inset:0;background:#000;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
 #mv.on{display:flex;}
-#mv video{width:100%;height:100%;object-fit:contain;}
-/* Always-visible X at top-left */
-.mv-close{position:absolute;top:calc(var(--safe-t) + 12px);left:calc(var(--safe-l) + 12px);background:rgba(10,10,26,.92);border:1px solid rgba(212,168,90,.45);border-radius:50%;width:38px;height:38px;color:var(--gold);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;opacity:0;pointer-events:none;transition:opacity .3s ease;}
-.mv-close:hover,.mv-close:active{background:rgba(212,168,90,.22);}
-.mv-close.visible{opacity:1;pointer-events:auto;}
+#mv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;}
+/* X button — tap anywhere to reveal, auto-hides after 3s */
+#mv-close-btn{
+  position:absolute;
+  top:calc(var(--safe-t) + 14px);
+  right:calc(var(--safe-r) + 14px);
+  width:48px;height:48px;
+  background:rgba(10,10,26,.9);
+  border:1.5px solid rgba(212,168,90,.5);
+  border-radius:50%;
+  color:var(--gold);
+  font-size:1.2rem;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  z-index:20;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  box-shadow:0 2px 16px rgba(0,0,0,.6);
+}
+#mv-close-btn.show{opacity:1;pointer-events:auto;}
+#mv-close-btn:active{background:rgba(212,168,90,.3);transform:scale(.92);}
 #mv-sit-msg{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   background:rgba(8,6,20,.95);
@@ -241,25 +260,73 @@ body{
 /* ── HUD ── */
 #hud{
   position:fixed;top:0;left:0;right:0;
-  height:calc(46px + var(--safe-t));
+  height:calc(50px + var(--safe-t));
   padding-top:var(--safe-t);
   display:none;align-items:center;justify-content:space-between;
   padding-left:calc(var(--safe-l)+10px);
   padding-right:calc(var(--safe-r)+10px);
-  background:linear-gradient(rgba(4,4,12,.9),transparent);
+  background:linear-gradient(rgba(4,4,12,.95) 60%,transparent);
   z-index:50;
+  gap:8px;
 }
 #hud.on{display:flex;}
-.hud-l{display:flex;align-items:center;gap:7px;}
-.hud-r{display:flex;align-items:center;gap:5px;}
-.pill{display:flex;align-items:center;gap:5px;background:rgba(8,8,22,.88);border:1px solid rgba(212,168,90,.15);border-radius:20px;padding:4px 10px;font-size:.67rem;color:var(--txt-m);backdrop-filter:blur(12px);}
-.pill-dot{width:5px;height:5px;border-radius:50%;}
+.hud-l{display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow:hidden;}
+.hud-r{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.pill{display:flex;align-items:center;gap:5px;background:rgba(8,8,22,.92);border:1px solid rgba(212,168,90,.18);border-radius:20px;padding:6px 10px;font-size:.67rem;color:var(--txt-m);backdrop-filter:blur(12px);white-space:nowrap;flex-shrink:0;}
+.pill-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
 .pill-dot.ok{background:#80e0a0;animation:pulse 2.5s infinite;}
 .pill-dot.w{background:#e0c070;animation:pulse 1.5s infinite;}
-.hud-btn{background:rgba(8,8,22,.88);border:1px solid rgba(212,168,90,.15);border-radius:7px;padding:5px 10px;color:var(--gold);font-family:'Jost',sans-serif;font-size:.68rem;font-weight:500;cursor:pointer;transition:all .2s;backdrop-filter:blur(12px);white-space:nowrap;}
-.hud-btn:hover,.hud-btn:active{background:rgba(212,168,90,.12);border-color:var(--gold);}
-.hud-btn.share-on{background:rgba(128,224,160,.08);border-color:#80e0a0;color:#80e0a0;}
-.scene-lbl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;color:rgba(240,200,68,.7);}
+/* Scene label — hidden on very small screens */
+.scene-lbl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:.82rem;color:rgba(240,200,68,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+@media(max-width:400px){.scene-lbl{display:none;}}
+/* HUD buttons — proper touch targets */
+.hud-btn{
+  background:rgba(8,8,22,.92);
+  border:1px solid rgba(212,168,90,.18);
+  border-radius:9px;
+  min-width:40px;height:36px;
+  padding:0 10px;
+  color:var(--gold);
+  font-family:'Jost',sans-serif;font-size:.75rem;font-weight:500;
+  cursor:pointer;transition:all .2s;
+  backdrop-filter:blur(12px);
+  white-space:nowrap;
+  display:flex;align-items:center;justify-content:center;gap:4px;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+}
+.hud-btn:hover,.hud-btn:active{background:rgba(212,168,90,.15);border-color:var(--gold);}
+.hud-btn.share-on{background:rgba(128,224,160,.1);border-color:#80e0a0;color:#80e0a0;}
+/* Hide button text on tiny screens, keep emoji */
+.hud-btn .btn-txt{font-size:.65rem;}
+@media(max-width:480px){.hud-btn .btn-txt{display:none;}.hud-btn{min-width:36px;padding:0 8px;}}
+/* Leave button */
+.hud-btn-leave{border-color:rgba(255,100,100,.2);color:rgba(255,130,130,.8);}
+.hud-btn-leave:hover,.hud-btn-leave:active{background:rgba(255,80,80,.1);border-color:rgba(255,100,100,.5);color:#ff8080;}
+/* Screenshare re-open pill */
+#mv-reopen{
+  position:fixed;
+  bottom:calc(var(--safe-b) + 14px);
+  left:50%;transform:translateX(-50%);
+  background:rgba(8,8,22,.96);
+  border:1px solid rgba(128,224,160,.4);
+  border-radius:20px;
+  padding:8px 18px;
+  color:#80e0a0;
+  font-family:'Jost',sans-serif;font-size:.72rem;font-weight:500;
+  cursor:pointer;z-index:70;
+  display:none;
+  align-items:center;gap:8px;
+  backdrop-filter:blur(14px);
+  box-shadow:0 4px 20px rgba(0,0,0,.6);
+  white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+  touch-action:manipulation;
+  letter-spacing:.03em;
+}
+#mv-reopen.show{display:flex;}
+#mv-reopen:active{transform:translateX(-50%) scale(.96);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
 
 /* ── MENU OVERLAY ── */
 #menu-overlay{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;background:rgba(4,4,12,.92);backdrop-filter:blur(20px);}
@@ -313,7 +380,7 @@ body{
 .note-cancel{padding:12px 18px;background:none;border:1px solid rgba(255,255,255,.08);border-radius:9px;color:var(--txt-m);font-family:'Jost',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;}
 
 /* ── TOAST ── */
-#toast{position:fixed;top:calc(50px + var(--safe-t));left:50%;transform:translateX(-50%);background:rgba(8,8,22,.95);border:1px solid rgba(212,168,90,.3);border-radius:10px;padding:9px 20px;font-size:.76rem;color:var(--gold);z-index:300;transition:opacity .35s;opacity:0;pointer-events:none;backdrop-filter:blur(14px);white-space:nowrap;letter-spacing:.04em;}
+#toast{position:fixed;top:calc(58px + var(--safe-t));left:50%;transform:translateX(-50%);background:rgba(8,8,22,.97);border:1px solid rgba(212,168,90,.3);border-radius:20px;padding:8px 18px;font-size:.74rem;color:var(--gold);z-index:300;transition:opacity .35s;opacity:0;pointer-events:none;backdrop-filter:blur(14px);white-space:nowrap;letter-spacing:.04em;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;}
 #toast.show{opacity:1;}
 
 /* ── INCOMING NOTE ── */
@@ -337,9 +404,10 @@ body{
 #photo-flash{position:fixed;inset:0;background:#fff;pointer-events:none;opacity:0;z-index:500;transition:none;}
 
 /* ── MINIMAP ── */
-#minimap{position:fixed;bottom:calc(var(--safe-b)+10px);right:calc(var(--safe-r)+10px);width:96px;height:64px;background:rgba(6,6,20,.92);border:1px solid rgba(212,168,90,.15);border-radius:8px;overflow:hidden;display:none;z-index:50;}
+#minimap{position:fixed;bottom:calc(var(--safe-b)+10px);right:calc(var(--safe-r)+10px);width:80px;height:54px;background:rgba(6,6,20,.92);border:1px solid rgba(212,168,90,.15);border-radius:8px;overflow:hidden;display:none;z-index:50;}
 #minimap.on{display:block;}
 #minimap canvas{width:100%;height:100%;}
+@media(max-width:400px){#minimap{width:64px;height:44px;}}
 
 /* ── CTRL HINT ── */
 #ctrl-hint{position:fixed;bottom:calc(var(--safe-b)+10px);left:50%;transform:translateX(-50%);background:rgba(6,6,20,.88);border:1px solid rgba(212,168,90,.1);border-radius:18px;padding:6px 16px;font-size:.62rem;color:var(--txt-s);display:none;z-index:50;backdrop-filter:blur(12px);white-space:nowrap;letter-spacing:.04em;}
@@ -356,10 +424,10 @@ body{
   height:153px;
   display:none;
   z-index:60;
-  /* Support safe areas without breaking fallback */
   bottom:max(24px, calc(env(safe-area-inset-bottom, 0px) + 16px));
   left:max(16px, calc(env(safe-area-inset-left, 0px) + 8px));
 }
+@media(max-height:420px){#dpad-wrap{transform:scale(.8);transform-origin:bottom left;}}
 #dpad{
   position:relative;
   width:153px;
@@ -557,9 +625,9 @@ body{
 <div id="game"><canvas id="cv"></canvas></div>
 
 <!-- MOVIE -->
-<div id="mv">
+<div id="mv" onclick="showMvClose()" ontouchstart="showMvClose()">
   <video id="mvvid" autoplay playsinline></video>
-  <button class="mv-close" onclick="closeScreenShare()">✕</button>
+  <button id="mv-close-btn" onclick="event.stopPropagation();closeMv();" ontouchend="event.preventDefault();event.stopPropagation();closeMv();">✕</button>
   <div id="mv-sit-msg">🎬 Sit down to watch together</div>
 </div>
 
@@ -570,11 +638,13 @@ body{
     <div class="scene-lbl" id="scenelbl">🍌 Cinema</div>
   </div>
   <div class="hud-r">
-    <button class="hud-btn" id="sharebtn" onclick="toggleShare()">🎬</button>
-    <button class="hud-btn" onclick="openNoteOverlay()">💌</button>
-    <button class="hud-btn" onclick="location.reload()">✕</button>
+    <button class="hud-btn" id="sharebtn" onclick="toggleShare()">🎬 <span class="btn-txt">Share</span></button>
+    <button class="hud-btn" onclick="openNoteOverlay()">💌 <span class="btn-txt">Note</span></button>
+
   </div>
 </div>
+<!-- Screenshare re-open button -->
+<div id="mv-reopen" onclick="reopenMv()">🎬 <span>Tap to watch</span></div>
 
 <div id="ctrl-hint">WASD/Arrows — Move &nbsp;·&nbsp; E — Interact &nbsp;·&nbsp; N — Note &nbsp;·&nbsp; P — Photo</div>
 <div id="minimap"><canvas id="mmcv"></canvas></div>
@@ -806,7 +876,7 @@ const W_TO_BEACH={x:14,y:250,w:26,h:120};
 // STATE
 // ═══════════════════════════════════════════════════════════
 const G={
-  phase:'lobby',scene:'theater',sAlpha:1,sTrans:false,
+  phase:'lobby',scene:'theater',sAlpha:1,sTrans:false,mvClosed:false,
   peer:null,conn:null,call:null,screenStream:null,remoteStream:null,
   isHost:false,partnerPeerId:null,sharing:false,
   me:{x:480,y:520,vx:0,vy:0,sitting:false,seatId:null,scene:'theater',name:'You',gender:'boy',
@@ -875,7 +945,7 @@ function hostUp(name){
   G.isHost=true;
   G.peer.on('open',()=>{document.getElementById('codeval').textContent=code;document.getElementById('codebox').style.display='block';setStat('Waiting for partner…');document.getElementById('mainbtn').disabled=true;document.getElementById('mainbtn').textContent='Waiting…';});
   G.peer.on('connection',conn=>{G.conn=conn;G.partnerPeerId=conn.peer;wireConn(conn);setStat('Partner joined!','ok');setTimeout(startGame,900);});
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;checkShowMovie();toast('🎬 Partner is sharing screen! Check top-left.');});});
+  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;G.mvClosed=false;checkShowMovie();toast('🎬 Partner is sharing screen! Tap the green pill to watch.');});});
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function joinUp(name){
@@ -890,7 +960,7 @@ function joinUp(name){
     conn.on('open',()=>{conn.send({type:'hello',name,gender:G.me.gender});setStat('Connected!','ok');setTimeout(startGame,700);});
     conn.on('error',()=>setStat('Could not connect.','err'));
   });
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;checkShowMovie();toast('🎬 Partner is sharing screen! Check top-left.');});});
+  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;G.mvClosed=false;checkShowMovie();toast('🎬 Partner is sharing screen! Tap the green pill to watch.');});});
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function wireConn(conn){
@@ -939,43 +1009,51 @@ function checkShowMovie(){
   const mv=document.getElementById('mv');
   const vid=document.getElementById('mvvid');
   const stream=G.screenStream||G.remoteStream;
-  // No stream — hide PiP
-  if(!stream){mv.classList.remove('on');vid.srcObject=null;return;}
-  // Attach stream
+  if(!stream){
+    mv.classList.remove('on');vid.srcObject=null;
+    document.getElementById('mv-reopen').classList.remove('show');
+    return;
+  }
   if(vid.srcObject!==stream){vid.srcObject=stream;}
-  // Show PiP as soon as there's a stream (top-left overlay, always visible)
+  document.getElementById('mv-reopen').classList.remove('show');
   vid.play().catch(()=>{});
   document.getElementById('mv-sit-msg').classList.remove('show');
   mv.classList.add('on');
   updateMvWho();
 }
-function closeMv(){document.getElementById('mv').classList.remove('on');document.getElementById('mv-sit-msg').classList.remove('show');hideMvClose();}
-// Stop share (if host) or just hide PiP (if viewer)
-function closeScreenShare(){if(G.sharing){toggleShare();}else{closeMv();}}
+function closeMv(){
+  G.mvClosed=true;
+  const vid=document.getElementById('mvvid');
+  vid.muted=true;
+  document.getElementById('mv').classList.remove('on');
+  document.getElementById('mv-sit-msg').classList.remove('show');
+  hideMvClose();
+  // If a stream is still active, show the re-open pill
+  if(G.screenStream||G.remoteStream) document.getElementById('mv-reopen').classList.add('show');
+}
+// X button — just hides the overlay for EVERYONE, stream keeps running
+function closeScreenShare(){closeMv();}
+// Re-open fullscreen view
+function reopenMv(){
+  G.mvClosed=false;
+  document.getElementById('mv-reopen').classList.remove('show');
+  document.getElementById('mvvid').muted=false;
+  checkShowMovie();
+}
 
-// ── Movie close button: hidden by default, revealed on tap (mobile) or Escape (PC) ──
 let _mvCloseTimer=null;
 function showMvClose(){
-  const btn=document.getElementById('mv').querySelector('.mv-close');
-  btn.classList.add('visible');
+  const btn=document.getElementById('mv-close-btn');
+  if(!btn)return;
+  btn.classList.add('show');
   clearTimeout(_mvCloseTimer);
-  _mvCloseTimer=setTimeout(hideMvClose,2000);
+  _mvCloseTimer=setTimeout(()=>btn.classList.remove('show'),3000);
 }
 function hideMvClose(){
-  const btn=document.getElementById('mv').querySelector('.mv-close');
-  if(btn){btn.classList.remove('visible');clearTimeout(_mvCloseTimer);}
+  clearTimeout(_mvCloseTimer);
+  const btn=document.getElementById('mv-close-btn');
+  if(btn) btn.classList.remove('show');
 }
-// Tap anywhere on the movie overlay (but not the close button itself) to reveal close
-document.getElementById('mv').addEventListener('click',function(e){
-  const btn=this.querySelector('.mv-close');
-  if(e.target===btn)return; // handled by onclick
-  showMvClose();
-});
-document.getElementById('mv').addEventListener('touchstart',function(e){
-  const btn=this.querySelector('.mv-close');
-  if(e.target===btn)return;
-  showMvClose();
-},{passive:true});
 function updateMvWho(){
   // mv-who element removed; nothing to update
 }
@@ -990,13 +1068,15 @@ async function toggleShare(){
     if(G.call){try{G.call.close();}catch(e){} G.call=null;}
     G.screenStream=null;G.remoteStream=null;G.sharing=false;
     document.getElementById('mvvid').srcObject=null;
+    document.getElementById('mv-reopen').classList.remove('show');
     document.getElementById('sharebtn').textContent='🎬';document.getElementById('sharebtn').classList.remove('share-on');
     closeMv();return;
   }
   try{
     const s=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:{echoCancellation:false,noiseSuppression:false}});
     G.screenStream=s;G.sharing=true;
-    document.getElementById('sharebtn').textContent='⏹';document.getElementById('sharebtn').classList.add('share-on');
+    document.getElementById('sharebtn').innerHTML='⏹ <span class="btn-txt">Stop</span>';document.getElementById('sharebtn').classList.add('share-on');
+    document.getElementById('mv-reopen').classList.remove('show');
     // Show locally — assign to remoteStream so checkShowMovie picks it up
     G.remoteStream=s;
     checkShowMovie();
@@ -1007,7 +1087,7 @@ async function toggleShare(){
     }
     // When user stops via browser UI
     s.getVideoTracks()[0].addEventListener('ended',()=>{if(G.sharing) toggleShare();});
-    toast('🎬 Screen shared! PiP window showing top-left.');
+    toast('🎬 Screen sharing started!');
   }catch(e){if(e.name!=='NotAllowedError')toast('Screen share failed: '+e.message);else toast('Screen share cancelled');}
 }
 
@@ -1190,7 +1270,7 @@ function update(){
   updParticles();updHearts();updLeaves();updFeed();
   G.popups.forEach(q=>q.life++);G.popups=G.popups.filter(q=>q.life<q.max);
   // Live check for movie when sitting state changes
-  if((G.remoteStream||G.screenStream)&&G.me.scene==='theater') checkShowMovie();
+  if((G.remoteStream||G.screenStream)&&G.me.scene==='theater'&&!G.mvClosed) checkShowMovie();
   sendPos();
 }
 
