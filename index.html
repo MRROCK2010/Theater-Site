@@ -878,7 +878,7 @@ function hostUp(name){
   G.isHost=true;
   G.peer.on('open',()=>{document.getElementById('codeval').textContent=code;document.getElementById('codebox').style.display='block';setStat('Waiting for partner…');document.getElementById('mainbtn').disabled=true;document.getElementById('mainbtn').textContent='Waiting…';});
   G.peer.on('connection',conn=>{G.conn=conn;G.partnerPeerId=conn.peer;wireConn(conn);setStat('Partner joined!','ok');setTimeout(startGame,900);});
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;document.getElementById('mvvid').srcObject=s;checkShowMovie();toast('🎬 Partner is sharing screen! Go to cinema & sit.');});});
+  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;checkShowMovie();toast('🎬 Partner is sharing screen! Go to cinema & sit.');});});
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function joinUp(name){
@@ -893,7 +893,7 @@ function joinUp(name){
     conn.on('open',()=>{conn.send({type:'hello',name,gender:G.me.gender});setStat('Connected!','ok');setTimeout(startGame,700);});
     conn.on('error',()=>setStat('Could not connect.','err'));
   });
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;document.getElementById('mvvid').srcObject=s;checkShowMovie();toast('🎬 Partner is sharing screen! Go to cinema & sit.');});});
+  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;checkShowMovie();toast('🎬 Partner is sharing screen! Go to cinema & sit.');});});
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function wireConn(conn){
@@ -940,20 +940,23 @@ function startGame(){
 // ═══════════════════════════════════════════════════════════
 function checkShowMovie(){
   const mv=document.getElementById('mv');
+  const vid=document.getElementById('mvvid');
   const stream=G.screenStream||G.remoteStream;
-  if(!stream){mv.classList.remove('on');return;}
+  // No stream at all — close overlay and clear
+  if(!stream){mv.classList.remove('on');vid.srcObject=null;return;}
+  // Always keep stream loaded so it's ready when user sits
+  if(vid.srcObject!==stream) vid.srcObject=stream;
   const sitting=G.me.sitting&&G.me.scene==='theater';
   if(sitting){
-    document.getElementById('mvvid').srcObject=stream;
-    document.getElementById('mvvid').play().catch(()=>{});
+    // Seated in theater — show movie
+    vid.play().catch(()=>{});
     document.getElementById('mv-sit-msg').classList.remove('show');
     mv.classList.add('on');
     updateMvWho();
   } else {
-    mv.classList.add('on');
-    document.getElementById('mvvid').srcObject=null;
-    document.getElementById('mv-sit-msg').classList.add('show');
-    updateMvWho();
+    // Not seated yet — DON'T open the black overlay, just show a toast hint
+    // (overlay stays closed; when they sit, interact() calls checkShowMovie again)
+    mv.classList.remove('on');
   }
 }
 function closeMv(){document.getElementById('mv').classList.remove('on');document.getElementById('mv-sit-msg').classList.remove('show');}
@@ -963,12 +966,15 @@ function updateMvWho(){
 }
 async function toggleShare(){
   if(!G.isHost&&!G.demoMode){toast('Only the host can share screen');return;}
+  // Guard: getDisplayMedia not available on most mobile browsers
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getDisplayMedia){toast('Screen share not supported on this device/browser');return;}
   if(G.sharing){
     // Stop all tracks
     if(G.screenStream) G.screenStream.getTracks().forEach(t=>t.stop());
     // Close the call
     if(G.call){try{G.call.close();}catch(e){} G.call=null;}
-    G.screenStream=null;G.sharing=false;
+    G.screenStream=null;G.remoteStream=null;G.sharing=false;
+    document.getElementById('mvvid').srcObject=null;
     document.getElementById('sharebtn').textContent='🎬';document.getElementById('sharebtn').classList.remove('share-on');
     closeMv();return;
   }
@@ -976,7 +982,7 @@ async function toggleShare(){
     const s=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:{echoCancellation:false,noiseSuppression:false}});
     G.screenStream=s;G.sharing=true;
     document.getElementById('sharebtn').textContent='⏹';document.getElementById('sharebtn').classList.add('share-on');
-    // Show locally too
+    // Show locally — assign to remoteStream so checkShowMovie picks it up
     G.remoteStream=s;
     checkShowMovie();
     // Call partner
@@ -986,7 +992,7 @@ async function toggleShare(){
     }
     // When user stops via browser UI
     s.getVideoTracks()[0].addEventListener('ended',()=>{if(G.sharing) toggleShare();});
-    toast('🎬 Screen shared! Sit in a seat to watch.');
+    toast('🎬 Screen shared! Go to cinema & sit in a seat to watch.');
   }catch(e){if(e.name!=='NotAllowedError')toast('Screen share failed: '+e.message);else toast('Screen share cancelled');}
 }
 
