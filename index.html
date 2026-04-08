@@ -218,7 +218,8 @@ body{
 #mv{position:fixed;inset:0;background:#000;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
 #mv.on{display:flex;}
 #mv video{width:100%;height:100%;object-fit:contain;}
-.mv-close{position:absolute;top:calc(var(--safe-t)+12px);right:calc(var(--safe-r)+12px);background:rgba(10,10,26,.88);border:1px solid rgba(212,168,90,.35);border-radius:50%;width:38px;height:38px;color:var(--gold);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;}
+.mv-close{position:absolute;top:calc(var(--safe-t)+12px);right:calc(var(--safe-r)+12px);background:rgba(10,10,26,.88);border:1px solid rgba(212,168,90,.35);border-radius:50%;width:38px;height:38px;color:var(--gold);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;opacity:0;pointer-events:none;transition:opacity .35s ease;}
+.mv-close.visible{opacity:1;pointer-events:auto;}
 #mv-sit-msg{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   background:rgba(8,6,20,.95);
@@ -562,7 +563,7 @@ body{
   <div id="mv-sit-msg">🎬 Sit down to watch together</div>
   <div class="mv-ui">
     <div class="mv-badge"><div class="mv-dot"></div><span id="mv-who">Watching together</span></div>
-    <span id="mv-hint">Tap ✕ to close</span>
+    <span id="mv-hint">Esc to close · Tap to reveal ✕</span>
   </div>
 </div>
 
@@ -959,7 +960,31 @@ function checkShowMovie(){
     mv.classList.remove('on');
   }
 }
-function closeMv(){document.getElementById('mv').classList.remove('on');document.getElementById('mv-sit-msg').classList.remove('show');}
+function closeMv(){document.getElementById('mv').classList.remove('on');document.getElementById('mv-sit-msg').classList.remove('show');hideMvClose();}
+
+// ── Movie close button: hidden by default, revealed on tap (mobile) or Escape (PC) ──
+let _mvCloseTimer=null;
+function showMvClose(){
+  const btn=document.getElementById('mv').querySelector('.mv-close');
+  btn.classList.add('visible');
+  clearTimeout(_mvCloseTimer);
+  _mvCloseTimer=setTimeout(hideMvClose,3000);
+}
+function hideMvClose(){
+  const btn=document.getElementById('mv').querySelector('.mv-close');
+  if(btn){btn.classList.remove('visible');clearTimeout(_mvCloseTimer);}
+}
+// Tap anywhere on the movie overlay (but not the close button itself) to reveal close
+document.getElementById('mv').addEventListener('click',function(e){
+  const btn=this.querySelector('.mv-close');
+  if(e.target===btn)return; // handled by onclick
+  showMvClose();
+});
+document.getElementById('mv').addEventListener('touchstart',function(e){
+  const btn=this.querySelector('.mv-close');
+  if(e.target===btn)return;
+  showMvClose();
+},{passive:true});
 function updateMvWho(){
   const both=G.me.sitting&&G.partner.sitting;
   document.getElementById('mv-who').textContent=both?`${G.me.name} & ${G.partner.name} 🎬 watching`:'🎬 Now sharing';
