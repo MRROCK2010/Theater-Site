@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-touch-callout:none;}
 :root{
   --gold:#d4a85a;--gold-l:#f0d090;--gold-d:#8a5a20;
   --rose:#e8a0b4;--lav:#b0c4f8;--banana:#f0c844;
@@ -475,7 +475,7 @@ body{
 #mobile-actions{display:none !important;}
 #m-btns-row{display:none !important;}
 
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.inp,.note-textarea{-webkit-user-select:text;user-select:text;}
 </style>
 </head>
 <body>
@@ -589,45 +589,91 @@ body{
   <div class="menu-card">
     <div class="menu-header">
       <div class="menu-title">🍌 Banana Pie Bistro</div>
-      <div class="menu-sub">An intimate menu for two</div>
+      <div class="menu-sub">A feast for two ♥</div>
     </div>
     <div class="menu-divider"></div>
+
+    <!-- KEBAB -->
     <div class="menu-section">
-      <div class="menu-section-title">🥂 To Begin</div>
-      <div class="menu-item"><div><div class="menu-item-name">Champagne Toast</div><div class="menu-item-desc">Two flutes of rosé champagne, chilled</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 12</span><button class="menu-item-btn" onclick="orderItem(this,'ch1','🥂')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥂')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Oysters Affair</div><div class="menu-item-desc">Six oysters, mignonette, lemon kiss</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'ch2','🦪')">Order</button><button class="menu-feed-btn" onclick="feedItem('🦪')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Truffle Crostini</div><div class="menu-item-desc">Black truffle, whipped ricotta, honey drizzle</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'ch3','🍞')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍞')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Banana Brûlée</div><div class="menu-item-desc">Caramelized banana, honey foam, edible gold</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 10</span><button class="menu-item-btn" onclick="orderItem(this,'ch4','🍌')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍌')">Feed♥</button></div></div>
+      <div class="menu-section-title">🥙 Kebabs</div>
+      <div class="menu-item"><div><div class="menu-item-name">Seekh Kebab</div><div class="menu-item-desc">Minced lamb on skewers, charred over coals, mint chutney</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'kb1','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Shami Kebab</div><div class="menu-item-desc">Soft chickpea & lamb patties, seared golden, tamarind dip</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 16</span><button class="menu-item-btn" onclick="orderItem(this,'kb2','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Kakori Kebab</div><div class="menu-item-desc">Melt-in-mouth spiced mince, saffron &amp; rose water</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 20</span><button class="menu-item-btn" onclick="orderItem(this,'kb3','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Galouti Kebab</div><div class="menu-item-desc">Awadhi royal kebab, 100+ spices, served on warqi paratha</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 22</span><button class="menu-item-btn" onclick="orderItem(this,'kb4','🍢')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍢')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Doner Kebab Roll</div><div class="menu-item-desc">Spiced lamb strips, garlic yogurt, pickled onions, wrap</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'kb5','🌯')">Order</button><button class="menu-feed-btn" onclick="feedItem('🌯')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Boti Kebab</div><div class="menu-item-desc">Cubed tender mutton, papaya marinade, smoky tandoor</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 19</span><button class="menu-item-btn" onclick="orderItem(this,'kb6','🍖')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍖')">Feed♥</button></div></div>
     </div>
     <div class="menu-divider" style="margin-top:12px;"></div>
+
+    <!-- CHICKEN -->
     <div class="menu-section">
-      <div class="menu-section-title">🍽️ Mains</div>
-      <div class="menu-item"><div><div class="menu-item-name">Filet Mignon Duo</div><div class="menu-item-desc">Two tenderloins, truffle butter, asparagus</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 58</span><button class="menu-item-btn" onclick="orderItem(this,'m1','🥩')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥩')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Lobster Thermidor</div><div class="menu-item-desc">Whole split lobster, cognac cream, gruyère</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 65</span><button class="menu-item-btn" onclick="orderItem(this,'m2','🦞')">Order</button><button class="menu-feed-btn" onclick="feedItem('🦞')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Saffron Risotto</div><div class="menu-item-desc">Porcini mushrooms, shaved parmesan</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 32</span><button class="menu-item-btn" onclick="orderItem(this,'m3','🍚')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍚')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Duck Confit</div><div class="menu-item-desc">Cherry gastrique, pomme purée</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 42</span><button class="menu-item-btn" onclick="orderItem(this,'m4','🍖')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍖')">Feed♥</button></div></div>
+      <div class="menu-section-title">🍗 Chicken Dishes</div>
+      <div class="menu-item"><div><div class="menu-item-name">Butter Chicken</div><div class="menu-item-desc">Velvety tomato-cream gravy, tender tikka, naan on side</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 24</span><button class="menu-item-btn" onclick="orderItem(this,'ck1','🍗')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍗')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Chicken Tikka Masala</div><div class="menu-item-desc">Grilled tikka in spiced onion-tomato masala, rich &amp; smoky</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 26</span><button class="menu-item-btn" onclick="orderItem(this,'ck2','🍗')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍗')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Chicken Biryani</div><div class="menu-item-desc">Dum-cooked basmati, whole spices, caramelized onions, raita</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 28</span><button class="menu-item-btn" onclick="orderItem(this,'ck3','🍚')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍚')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Tandoori Chicken</div><div class="menu-item-desc">Half chicken, yogurt &amp; spice marinade, charcoal tandoor</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 22</span><button class="menu-item-btn" onclick="orderItem(this,'ck4','🍗')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍗')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Chicken 65</div><div class="menu-item-desc">Crispy fried chicken, curry leaves, green chillies, yogurt</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'ck5','🍗')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍗')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Chicken Chettinad</div><div class="menu-item-desc">South Indian black pepper &amp; kalpasi spice curry, fierce &amp; fragrant</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 26</span><button class="menu-item-btn" onclick="orderItem(this,'ck6','🍛')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍛')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Chicken Shawarma Platter</div><div class="menu-item-desc">Lebanese-spiced strips, hummus, tabbouleh, pita</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 20</span><button class="menu-item-btn" onclick="orderItem(this,'ck7','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Lemon Herb Roast Chicken</div><div class="menu-item-desc">Whole roasted half, rosemary-lemon baste, roasted potatoes</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 30</span><button class="menu-item-btn" onclick="orderItem(this,'ck8','🍗')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍗')">Feed♥</button></div></div>
     </div>
     <div class="menu-divider" style="margin-top:12px;"></div>
+
+    <!-- WAFFLES -->
     <div class="menu-section">
-      <div class="menu-section-title">🍫 Desserts</div>
-      <div class="menu-item"><div><div class="menu-item-name">Banana Pie à Deux</div><div class="menu-item-desc">Warm banana tart, salted caramel, vanilla ice cream</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 16</span><button class="menu-item-btn" onclick="orderItem(this,'d1','🥧')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥧')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Chocolate Lava Cake</div><div class="menu-item-desc">Warm dark chocolate, raspberry coulis</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'d2','🍫')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍫')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Strawberries & Cream</div><div class="menu-item-desc">Dark chocolate, gold leaf, two spoons</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 10</span><button class="menu-item-btn" onclick="orderItem(this,'d3','🍓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍓')">Feed♥</button></div></div>
+      <div class="menu-section-title">🧇 Waffles</div>
+      <div class="menu-item"><div><div class="menu-item-name">Classic Butter Waffle</div><div class="menu-item-desc">Golden crisp, churned butter, warm maple syrup</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 12</span><button class="menu-item-btn" onclick="orderItem(this,'wf1','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Banana Caramel Waffle</div><div class="menu-item-desc">Fresh banana slices, salted caramel drizzle, whipped cream</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 15</span><button class="menu-item-btn" onclick="orderItem(this,'wf2','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Red Velvet Waffle</div><div class="menu-item-desc">Velvety cocoa batter, cream cheese glaze, strawberry compote</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 16</span><button class="menu-item-btn" onclick="orderItem(this,'wf3','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Chicken &amp; Waffle</div><div class="menu-item-desc">Crispy fried chicken on a fluffy waffle, hot honey butter</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 22</span><button class="menu-item-btn" onclick="orderItem(this,'wf4','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Nutella Berry Waffle</div><div class="menu-item-desc">Warm Nutella spread, mixed berries, crushed hazelnuts</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'wf5','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Liège Waffle</div><div class="menu-item-desc">Belgian pearl sugar waffle, caramelized crust, vanilla ice cream</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 15</span><button class="menu-item-btn" onclick="orderItem(this,'wf6','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Matcha White Choc Waffle</div><div class="menu-item-desc">Earthy matcha batter, white chocolate drizzle, mochi pieces</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 16</span><button class="menu-item-btn" onclick="orderItem(this,'wf7','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Savoury Cheese &amp; Herb Waffle</div><div class="menu-item-desc">Gruyère &amp; chive batter, crème fraîche, smoked salmon</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'wf8','🧇')">Order</button><button class="menu-feed-btn" onclick="feedItem('🧇')">Feed♥</button></div></div>
     </div>
     <div class="menu-divider" style="margin-top:12px;"></div>
+
+    <!-- ICE CREAM -->
     <div class="menu-section">
-      <div class="menu-section-title">🍷 Drinks</div>
-      <div class="menu-item"><div><div class="menu-item-name">House Red</div><div class="menu-item-desc">Côtes du Rhône, cherry, long finish</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 9</span><button class="menu-item-btn" onclick="orderItem(this,'r1','🍷')">Order</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Rosé Pétillant</div><div class="menu-item-desc">Sparkling rosé, strawberry bubbles</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 10</span><button class="menu-item-btn" onclick="orderItem(this,'r2','🥂')">Order</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Banana Foster Cocktail</div><div class="menu-item-desc">Rum, banana liqueur, caramel cream</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'r3','🍹')">Order</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Couple's Mocktail</div><div class="menu-item-desc">Passion fruit, lychee, rose water</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 8</span><button class="menu-item-btn" onclick="orderItem(this,'r4','🧃')">Order</button></div></div>
+      <div class="menu-section-title">🍦 Ice Cream</div>
+      <div class="menu-item"><div><div class="menu-item-name">Mango Kulfi</div><div class="menu-item-desc">Dense Indian frozen cream, Alphonso mango, cardamom</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 10</span><button class="menu-item-btn" onclick="orderItem(this,'ic1','🍧')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍧')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Rose &amp; Pistachio Gelato</div><div class="menu-item-desc">Creamy Italian gelato, Persian rose water, crushed pistachios</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 12</span><button class="menu-item-btn" onclick="orderItem(this,'ic2','🍦')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍦')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Chocolate Lava Sundae</div><div class="menu-item-desc">Warm dark choc sauce, vanilla scoops, brownie crumble</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'ic3','🍨')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍨')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Banana Split for Two</div><div class="menu-item-desc">3 scoops, banana, hot fudge, strawberry sauce, cherry</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 16</span><button class="menu-item-btn" onclick="orderItem(this,'ic4','🍌')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍌')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Tender Coconut Ice Cream</div><div class="menu-item-desc">Served in a young coconut shell, fresh coconut pieces</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 13</span><button class="menu-item-btn" onclick="orderItem(this,'ic5','🥥')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥥')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Saffron &amp; Cardamom Scoop</div><div class="menu-item-desc">Kesar-infused cream, edible gold, almond slivers</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 15</span><button class="menu-item-btn" onclick="orderItem(this,'ic6','🍦')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍦')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Cookies &amp; Cream Blizzard</div><div class="menu-item-desc">Thick milkshake blended with Oreos, topped with whipped cream</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 13</span><button class="menu-item-btn" onclick="orderItem(this,'ic7','🍪')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍪')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Strawberry Sorbet</div><div class="menu-item-desc">Dairy-free, fresh strawberries, lemon zest, basil</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 10</span><button class="menu-item-btn" onclick="orderItem(this,'ic8','🍓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍓')">Feed♥</button></div></div>
     </div>
     <div class="menu-divider" style="margin-top:12px;"></div>
+
+    <!-- DOSAS -->
     <div class="menu-section">
-      <div class="menu-section-title">🍿 Cinema Treats</div>
-      <div class="menu-item"><div><div class="menu-item-name">Banana Caramel Popcorn</div><div class="menu-item-desc">Banana glaze, sea salt</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 8</span><button class="menu-item-btn" onclick="orderItem(this,'s1','🍿')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍿')">Feed♥</button></div></div>
-      <div class="menu-item"><div><div class="menu-item-name">Candy Jar</div><div class="menu-item-desc">Assorted sweets, chocolate truffles</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 6</span><button class="menu-item-btn" onclick="orderItem(this,'s2','🍬')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍬')">Feed♥</button></div></div>
+      <div class="menu-section-title">🫓 Dosas</div>
+      <div class="menu-item"><div><div class="menu-item-name">✨ Masala Dosa</div><div class="menu-item-desc">Crispy golden crepe, spiced potato filling, coconut chutney &amp; sambar — the classic ♥</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 16</span><button class="menu-item-btn" onclick="orderItem(this,'ds1','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Paper Dosa</div><div class="menu-item-desc">Wafer-thin & impossibly long, served with chutneys & sambar</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 12</span><button class="menu-item-btn" onclick="orderItem(this,'ds2','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Ghee Roast Dosa</div><div class="menu-item-desc">Slathered with clarified butter, roasted crisp, Mysore chutney</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'ds3','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Set Dosa</div><div class="menu-item-desc">Three soft fluffy pancakes, potato palya, chutneys</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 12</span><button class="menu-item-btn" onclick="orderItem(this,'ds4','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Mysore Masala Dosa</div><div class="menu-item-desc">Red chilli-garlic chutney spread inside, potato masala, extra spicy</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 17</span><button class="menu-item-btn" onclick="orderItem(this,'ds5','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Cheese Masala Dosa</div><div class="menu-item-desc">Classic masala dosa with melted cheddar &amp; mozzarella inside</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'ds6','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Rava Dosa</div><div class="menu-item-desc">Semolina &amp; rice flour, lacy crispy texture, onion &amp; cumin</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 14</span><button class="menu-item-btn" onclick="orderItem(this,'ds7','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Pesarattu</div><div class="menu-item-desc">Green moong dal dosa, ginger, green chilli, upma stuffed</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 13</span><button class="menu-item-btn" onclick="orderItem(this,'ds8','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Neer Dosa</div><div class="menu-item-desc">Coastal Karnataka rice crepe, paper-soft, coconut milk chutney</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 13</span><button class="menu-item-btn" onclick="orderItem(this,'ds9','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Egg Dosa</div><div class="menu-item-desc">Crispy dosa, egg cracked &amp; cooked on top, spice tempering</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 15</span><button class="menu-item-btn" onclick="orderItem(this,'ds10','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Paneer Masala Dosa</div><div class="menu-item-desc">Spiced paneer bhurji filling, coriander, capsicum, chutney</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'ds11','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Spring Onion Dosa</div><div class="menu-item-desc">Fermented batter with spring onions, sesame, served fresh</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 12</span><button class="menu-item-btn" onclick="orderItem(this,'ds12','🫓')">Order</button><button class="menu-feed-btn" onclick="feedItem('🫓')">Feed♥</button></div></div>
     </div>
+    <div class="menu-divider" style="margin-top:12px;"></div>
+
+    <!-- DRINKS -->
+    <div class="menu-section">
+      <div class="menu-section-title">🥤 Drinks</div>
+      <div class="menu-item"><div><div class="menu-item-name">Mango Lassi</div><div class="menu-item-desc">Thick yogurt, fresh mango, pinch of cardamom</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 8</span><button class="menu-item-btn" onclick="orderItem(this,'dk1','🥛')">Order</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Filter Coffee</div><div class="menu-item-desc">South Indian decoction, hot milk, frothy &amp; strong</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 6</span><button class="menu-item-btn" onclick="orderItem(this,'dk2','☕')">Order</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Rose Sharbat</div><div class="menu-item-desc">Rose syrup, chilled milk, sabja seeds, pistachios</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 7</span><button class="menu-item-btn" onclick="orderItem(this,'dk3','🌹')">Order</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Couple's Mocktail</div><div class="menu-item-desc">Passion fruit, lychee, rose water, sparkling</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 9</span><button class="menu-item-btn" onclick="orderItem(this,'dk4','🧃')">Order</button></div></div>
+    </div>
+
     <div class="menu-footer">
       <button class="menu-close-btn" onclick="closeMenu()">✦ Close</button>
     </div>
@@ -832,7 +878,7 @@ function hostUp(name){
   G.isHost=true;
   G.peer.on('open',()=>{document.getElementById('codeval').textContent=code;document.getElementById('codebox').style.display='block';setStat('Waiting for partner…');document.getElementById('mainbtn').disabled=true;document.getElementById('mainbtn').textContent='Waiting…';});
   G.peer.on('connection',conn=>{G.conn=conn;G.partnerPeerId=conn.peer;wireConn(conn);setStat('Partner joined!','ok');setTimeout(startGame,900);});
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;document.getElementById('mvvid').srcObject=s;checkShowMovie();});});
+  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;document.getElementById('mvvid').srcObject=s;checkShowMovie();toast('🎬 Partner is sharing screen! Go to cinema & sit.');});});
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function joinUp(name){
@@ -840,14 +886,14 @@ function joinUp(name){
   if(!raw){setStat('Enter a room code!','err');return;}
   const id='BP-'+raw.replace(/^BP-/,'');
   setStat('Connecting…');
-  G.peer=new Peer({config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}});
+  G.peer=new Peer({config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}});
   G.isHost=false;
   G.peer.on('open',()=>{
     const conn=G.peer.connect(id,{reliable:true});G.conn=conn;wireConn(conn);
     conn.on('open',()=>{conn.send({type:'hello',name,gender:G.me.gender});setStat('Connected!','ok');setTimeout(startGame,700);});
     conn.on('error',()=>setStat('Could not connect.','err'));
   });
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;document.getElementById('mvvid').srcObject=s;checkShowMovie();});});
+  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;document.getElementById('mvvid').srcObject=s;checkShowMovie();toast('🎬 Partner is sharing screen! Go to cinema & sit.');});});
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function wireConn(conn){
@@ -894,16 +940,16 @@ function startGame(){
 // ═══════════════════════════════════════════════════════════
 function checkShowMovie(){
   const mv=document.getElementById('mv');
-  const stream=G.remoteStream||G.screenStream;
+  const stream=G.screenStream||G.remoteStream;
   if(!stream){mv.classList.remove('on');return;}
   const sitting=G.me.sitting&&G.me.scene==='theater';
   if(sitting){
     document.getElementById('mvvid').srcObject=stream;
+    document.getElementById('mvvid').play().catch(()=>{});
     document.getElementById('mv-sit-msg').classList.remove('show');
     mv.classList.add('on');
     updateMvWho();
   } else {
-    // Show overlay but with "sit down" message
     mv.classList.add('on');
     document.getElementById('mvvid').srcObject=null;
     document.getElementById('mv-sit-msg').classList.add('show');
@@ -918,7 +964,11 @@ function updateMvWho(){
 async function toggleShare(){
   if(!G.isHost&&!G.demoMode){toast('Only the host can share screen');return;}
   if(G.sharing){
-    G.screenStream?.getTracks().forEach(t=>t.stop());G.screenStream=null;G.sharing=false;G.remoteStream=null;
+    // Stop all tracks
+    if(G.screenStream) G.screenStream.getTracks().forEach(t=>t.stop());
+    // Close the call
+    if(G.call){try{G.call.close();}catch(e){} G.call=null;}
+    G.screenStream=null;G.sharing=false;
     document.getElementById('sharebtn').textContent='🎬';document.getElementById('sharebtn').classList.remove('share-on');
     closeMv();return;
   }
@@ -926,11 +976,18 @@ async function toggleShare(){
     const s=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:{echoCancellation:false,noiseSuppression:false}});
     G.screenStream=s;G.sharing=true;
     document.getElementById('sharebtn').textContent='⏹';document.getElementById('sharebtn').classList.add('share-on');
+    // Show locally too
+    G.remoteStream=s;
     checkShowMovie();
-    if(G.conn?.open&&G.partnerPeerId){G.call=G.peer.call(G.partnerPeerId,s);}
-    s.getVideoTracks()[0].addEventListener('ended',()=>toggleShare());
+    // Call partner
+    if(G.conn?.open&&G.partnerPeerId){
+      if(G.call){try{G.call.close();}catch(e){}}
+      G.call=G.peer.call(G.partnerPeerId,s);
+    }
+    // When user stops via browser UI
+    s.getVideoTracks()[0].addEventListener('ended',()=>{if(G.sharing) toggleShare();});
     toast('🎬 Screen shared! Sit in a seat to watch.');
-  }catch{toast('Screen share cancelled');}
+  }catch(e){if(e.name!=='NotAllowedError')toast('Screen share failed: '+e.message);else toast('Screen share cancelled');}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1651,6 +1708,10 @@ document.getElementById('joinInp').addEventListener('keydown',e=>{if(e.key==='En
 
 // Prevent bounce scroll on iOS
 document.addEventListener('touchmove',e=>{if(G.phase==='game')e.preventDefault();},{passive:false});
+// Prevent context menu (long-press menu) on mobile
+document.addEventListener('contextmenu',e=>e.preventDefault());
+// Prevent text selection on canvas touch
+cv.addEventListener('touchstart',e=>e.preventDefault(),{passive:false});
 </script>
 </body>
 </html>
