@@ -1067,16 +1067,9 @@ function checkShowMovie(){
   }
   if(vid.srcObject!==stream){vid.srcObject=stream;}
   document.getElementById('mv-reopen').classList.remove('show');
-  // HOST: mute the video element — they hear the window directly, not through the capture.
-  // Playing captured audio back to the host would double it.
-  // VIEWER: apply their volume slider — this stream is the only way they hear it.
-  if(G.sharing){
-    vid.muted=true;
-  } else {
-    const _sl=document.getElementById('mv-vol-slider');
-    if(_sl){const _v=parseInt(_sl.value,10)||80;vid.volume=_v/100;vid.muted=(_v===0);}
-    else{vid.muted=false;}
-  }
+  // Apply current slider volume
+  const _sl=document.getElementById('mv-vol-slider');
+  if(_sl){const _v=parseInt(_sl.value,10)||80;vid.volume=_v/100;vid.muted=(_v===0);}
   vid.play().catch(()=>{});
   document.getElementById('mv-sit-msg').classList.remove('show');
   mv.classList.add('on');
@@ -1170,20 +1163,29 @@ async function toggleShare(){
     closeMv();return;
   }
   try{
-    const s=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:{echoCancellation:false,noiseSuppression:false}});
-    G.screenStream=s;G.sharing=true;
+    const s=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    const _vt=s.getVideoTracks()[0];
+    const _at=s.getAudioTracks(); // ONLY the captured window/tab audio — nothing else
+    // localStream for host display: video only — host hears the window natively, no doubling, nothing muted
+    const localStream=new MediaStream();
+    if(_vt) localStream.addTrack(_vt);
+    // sendStream to partner: video + ONLY the display audio — no mic, no other app audio
+    const sendStream=new MediaStream();
+    if(_vt) sendStream.addTrack(_vt);
+    _at.forEach(t=>sendStream.addTrack(t));
+    G.screenStream=sendStream;G.sharing=true;
     document.getElementById('sharebtn').innerHTML='⏹ <span class="btn-txt">Stop</span>';document.getElementById('sharebtn').classList.add('share-on');
     document.getElementById('mv-reopen').classList.remove('show');
-    // Show locally — assign to remoteStream so checkShowMovie picks it up
-    G.remoteStream=s;
+    // Host sees video-only locally — no audio playback through video element (hears window directly)
+    G.remoteStream=localStream;
     checkShowMovie();
-    // Call partner
+    // Partner receives video + window audio only
     if(G.conn?.open&&G.partnerPeerId){
       if(G.call){try{G.call.close();}catch(e){}}
-      G.call=G.peer.call(G.partnerPeerId,s);
+      G.call=G.peer.call(G.partnerPeerId,sendStream);
     }
     // When user stops via browser UI
-    s.getVideoTracks()[0].addEventListener('ended',()=>{if(G.sharing) toggleShare();});
+    if(_vt) _vt.addEventListener('ended',()=>{if(G.sharing) toggleShare();});
     toast('🎬 Screen sharing started!');
   }catch(e){if(e.name!=='NotAllowedError')toast('Screen share failed: '+e.message);else toast('Screen share cancelled');}
 }
