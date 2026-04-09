@@ -215,9 +215,50 @@ body{
 }
 
 /* ── SCREEN SHARE (fullscreen) ── */
-#mv{position:fixed;inset:0;background:#000;z-index:200;display:none;}
-#mv.on{display:block;}
-#mv video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;border:none;outline:none;}
+#mv{position:fixed;inset:0;background:#000;z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;}
+#mv.on{display:flex;}
+#mv video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;z-index:1;}
+/* Volume control — shown only inside movie overlay */
+#mv-vol{
+  position:absolute;
+  bottom:calc(var(--safe-b) + 22px);
+  left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;
+  background:rgba(8,8,22,.82);
+  border:1px solid rgba(212,168,90,.28);
+  border-radius:24px;
+  padding:8px 18px;
+  z-index:20;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s ease;
+  backdrop-filter:blur(12px);
+  white-space:nowrap;
+}
+#mv-vol.show{opacity:1;pointer-events:auto;}
+#mv-vol-icon{font-size:1rem;color:var(--gold);flex-shrink:0;cursor:pointer;user-select:none;}
+#mv-vol-slider{
+  -webkit-appearance:none;appearance:none;
+  width:clamp(90px,18vw,160px);
+  height:4px;
+  border-radius:2px;
+  background:linear-gradient(to right,var(--gold) var(--vol,80%),rgba(255,255,255,.18) var(--vol,80%));
+  outline:none;cursor:pointer;
+}
+#mv-vol-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:16px;height:16px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 8px rgba(212,168,90,.5);
+  cursor:pointer;
+}
+#mv-vol-slider::-moz-range-thumb{
+  width:16px;height:16px;border:none;
+  border-radius:50%;background:var(--gold);cursor:pointer;
+}
+#mv-vol-label{font-size:.68rem;color:var(--gold);font-family:'Jost',sans-serif;min-width:28px;text-align:right;}
+
 /* X button — tap anywhere to reveal, auto-hides after 3s */
 #mv-close-btn{
   position:absolute;
@@ -629,6 +670,16 @@ body{
   <video id="mvvid" autoplay playsinline></video>
   <button id="mv-close-btn" onclick="event.stopPropagation();closeMv();" ontouchend="event.preventDefault();event.stopPropagation();closeMv();">✕</button>
   <div id="mv-sit-msg">🎬 Sit down to watch together</div>
+  <!-- Volume control — screenshare audio only -->
+  <div id="mv-vol">
+    <span id="mv-vol-icon" onclick="mvVolMute()" title="Mute/Unmute">🔊</span>
+    <input id="mv-vol-slider" type="range" min="0" max="100" value="80"
+           oninput="mvVolChange(this.value)"
+           ontouchstart="event.stopPropagation()"
+           ontouchmove="event.stopPropagation()"
+           onclick="event.stopPropagation()">
+    <span id="mv-vol-label">80%</span>
+  </div>
 </div>
 
 <!-- HUD -->
@@ -663,7 +714,7 @@ body{
     <!-- KEBAB -->
     <div class="menu-section">
       <div class="menu-section-title">🥙 Kebabs</div>
-      <div class="menu-item"><div><div class="menu-item-name">Seekh Kebab</div><div class="menu-item-desc">Minced lamb on skewers, charred over coals, mint chutney</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'kb1','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
+      <div class="menu-item"><div><div class="menu-item-name">Sinchana The Goddess Fav Kebab</div><div class="menu-item-desc">Yummyy yummy tasty tasty Kebab</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 18</span><button class="menu-item-btn" onclick="orderItem(this,'kb1','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
       <div class="menu-item"><div><div class="menu-item-name">Shami Kebab</div><div class="menu-item-desc">Soft chickpea & lamb patties, seared golden, tamarind dip</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 16</span><button class="menu-item-btn" onclick="orderItem(this,'kb2','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
       <div class="menu-item"><div><div class="menu-item-name">Kakori Kebab</div><div class="menu-item-desc">Melt-in-mouth spiced mince, saffron &amp; rose water</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 20</span><button class="menu-item-btn" onclick="orderItem(this,'kb3','🥙')">Order</button><button class="menu-feed-btn" onclick="feedItem('🥙')">Feed♥</button></div></div>
       <div class="menu-item"><div><div class="menu-item-name">Galouti Kebab</div><div class="menu-item-desc">Awadhi royal kebab, 100+ spices, served on warqi paratha</div></div><div class="menu-item-right"><span class="menu-item-price">♥ 22</span><button class="menu-item-btn" onclick="orderItem(this,'kb4','🍢')">Order</button><button class="menu-feed-btn" onclick="feedItem('🍢')">Feed♥</button></div></div>
@@ -1016,6 +1067,9 @@ function checkShowMovie(){
   }
   if(vid.srcObject!==stream){vid.srcObject=stream;}
   document.getElementById('mv-reopen').classList.remove('show');
+  // Apply current slider volume
+  const _sl=document.getElementById('mv-vol-slider');
+  if(_sl){const _v=parseInt(_sl.value,10)||80;vid.volume=_v/100;vid.muted=(_v===0);}
   vid.play().catch(()=>{});
   document.getElementById('mv-sit-msg').classList.remove('show');
   mv.classList.add('on');
@@ -1024,7 +1078,7 @@ function checkShowMovie(){
 function closeMv(){
   G.mvClosed=true;
   const vid=document.getElementById('mvvid');
-  vid.muted=true;
+  vid.muted=true; // mute while hidden so audio doesn't leak
   document.getElementById('mv').classList.remove('on');
   document.getElementById('mv-sit-msg').classList.remove('show');
   hideMvClose();
@@ -1037,22 +1091,58 @@ function closeScreenShare(){closeMv();}
 function reopenMv(){
   G.mvClosed=false;
   document.getElementById('mv-reopen').classList.remove('show');
-  document.getElementById('mvvid').muted=false;
+  const vid=document.getElementById('mvvid');
+  const slider=document.getElementById('mv-vol-slider');
+  const vol=parseInt(slider?slider.value:'80',10)||80;
+  vid.volume=vol/100;
+  vid.muted=(vol===0);
   checkShowMovie();
 }
 
 let _mvCloseTimer=null;
 function showMvClose(){
   const btn=document.getElementById('mv-close-btn');
+  const vol=document.getElementById('mv-vol');
   if(!btn)return;
   btn.classList.add('show');
+  if(vol) vol.classList.add('show');
   clearTimeout(_mvCloseTimer);
-  _mvCloseTimer=setTimeout(()=>btn.classList.remove('show'),3000);
+  _mvCloseTimer=setTimeout(()=>{btn.classList.remove('show');if(vol)vol.classList.remove('show');},3000);
 }
 function hideMvClose(){
   clearTimeout(_mvCloseTimer);
   const btn=document.getElementById('mv-close-btn');
+  const vol=document.getElementById('mv-vol');
   if(btn) btn.classList.remove('show');
+  if(vol) vol.classList.remove('show');
+}
+
+// Volume helpers — screenshare audio only
+function mvVolChange(val){
+  const vid=document.getElementById('mvvid');
+  const pct=parseInt(val,10);
+  vid.volume=pct/100;
+  vid.muted=(pct===0);
+  document.getElementById('mv-vol-label').textContent=pct+'%';
+  document.getElementById('mv-vol-slider').style.setProperty('--vol',pct+'%');
+  document.getElementById('mv-vol-icon').textContent=pct===0?'🔇':pct<50?'🔉':'🔊';
+  // Reset hide timer on interaction
+  clearTimeout(_mvCloseTimer);
+  _mvCloseTimer=setTimeout(()=>{
+    document.getElementById('mv-close-btn').classList.remove('show');
+    document.getElementById('mv-vol').classList.remove('show');
+  },3000);
+}
+function mvVolMute(){
+  const vid=document.getElementById('mvvid');
+  const slider=document.getElementById('mv-vol-slider');
+  if(vid.muted||vid.volume===0){
+    const restore=parseInt(slider.dataset.prevVol||'80',10)||80;
+    mvVolChange(restore);slider.value=restore;
+  } else {
+    slider.dataset.prevVol=slider.value;
+    mvVolChange(0);slider.value=0;
+  }
 }
 function updateMvWho(){
   // mv-who element removed; nothing to update
