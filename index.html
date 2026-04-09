@@ -1056,50 +1056,27 @@ function startGame(){
 // ═══════════════════════════════════════════════════════════
 // SCREEN SHARE — only plays when SITTING in theater
 // ═══════════════════════════════════════════════════════════
-// AudioContext node for viewer — routes ONLY the received stream audio, nothing else
-let _mvAudioCtx=null, _mvAudioSrc=null, _mvGainNode=null;
-function _teardownAudio(){
-  try{if(_mvAudioSrc){_mvAudioSrc.disconnect();_mvAudioSrc=null;}}catch(e){}
-  try{if(_mvGainNode){_mvGainNode.disconnect();_mvGainNode=null;}}catch(e){}
-  try{if(_mvAudioCtx){_mvAudioCtx.close();_mvAudioCtx=null;}}catch(e){}
-}
-function _setupViewerAudio(stream){
-  _teardownAudio();
-  const audioTracks=stream.getAudioTracks();
-  if(!audioTracks.length) return; // no audio in stream
-  // Build a pure audio-only stream from just these tracks
-  const audioOnlyStream=new MediaStream();
-  audioTracks.forEach(t=>audioOnlyStream.addTrack(t));
-  _mvAudioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  _mvAudioSrc=_mvAudioCtx.createMediaStreamSource(audioOnlyStream);
-  _mvGainNode=_mvAudioCtx.createGain();
-  const _sl=document.getElementById('mv-vol-slider');
-  _mvGainNode.gain.value=_sl?parseInt(_sl.value,10)/100:0.8;
-  _mvAudioSrc.connect(_mvGainNode);
-  _mvGainNode.connect(_mvAudioCtx.destination);
-}
 function checkShowMovie(){
   const mv=document.getElementById('mv');
   const vid=document.getElementById('mvvid');
   const stream=G.screenStream||G.remoteStream;
   if(!stream){
     mv.classList.remove('on');vid.srcObject=null;
-    _teardownAudio();
     document.getElementById('mv-reopen').classList.remove('show');
     return;
   }
-  // Always mute the video element — audio is handled separately below
-  vid.muted=true;
   if(vid.srcObject!==stream){vid.srcObject=stream;}
   document.getElementById('mv-reopen').classList.remove('show');
-  vid.play().catch(()=>{});
-  // HOST: already hears the window natively — no audio routing needed
-  // VIEWER: pipe ONLY the stream's audio through AudioContext — completely isolated
-  if(!G.sharing){
-    _setupViewerAudio(stream);
+  // HOST: mute video element — they hear the app window directly, not through the capture
+  // VIEWER: unmute so they hear the stream (the only audio they get)
+  if(G.sharing){
+    vid.muted=true;
   } else {
-    _teardownAudio(); // host never needs audio routing
+    vid.muted=false;
+    const _sl=document.getElementById('mv-vol-slider');
+    if(_sl){const _v=parseInt(_sl.value,10)||80;vid.volume=_v/100;}
   }
+  vid.play().catch(()=>{});
   document.getElementById('mv-sit-msg').classList.remove('show');
   mv.classList.add('on');
   updateMvWho();
@@ -1108,7 +1085,6 @@ function closeMv(){
   G.mvClosed=true;
   const vid=document.getElementById('mvvid');
   vid.muted=true;
-  _teardownAudio(); // stop stream audio while overlay is hidden
   document.getElementById('mv').classList.remove('on');
   document.getElementById('mv-sit-msg').classList.remove('show');
   hideMvClose();
@@ -1120,11 +1096,6 @@ function closeScreenShare(){closeMv();}
 function reopenMv(){
   G.mvClosed=false;
   document.getElementById('mv-reopen').classList.remove('show');
-  const vid=document.getElementById('mvvid');
-  const slider=document.getElementById('mv-vol-slider');
-  const vol=parseInt(slider?slider.value:'80',10)||80;
-  vid.volume=vol/100;
-  vid.muted=(vol===0);
   checkShowMovie();
 }
 
@@ -1146,14 +1117,16 @@ function hideMvClose(){
   if(vol) vol.classList.remove('show');
 }
 
-// Volume helpers — controls ONLY the viewer AudioContext gain (stream audio only)
+// Volume helpers — screenshare audio only
 function mvVolChange(val){
+  const vid=document.getElementById('mvvid');
   const pct=parseInt(val,10);
-  // Drive the AudioContext gain — this is the ONLY audio the viewer hears from the stream
-  if(_mvGainNode) _mvGainNode.gain.value=pct/100;
+  vid.volume=pct/100;
+  vid.muted=(pct===0);
   document.getElementById('mv-vol-label').textContent=pct+'%';
   document.getElementById('mv-vol-slider').style.setProperty('--vol',pct+'%');
   document.getElementById('mv-vol-icon').textContent=pct===0?'🔇':pct<50?'🔉':'🔊';
+  // Reset hide timer on interaction
   clearTimeout(_mvCloseTimer);
   _mvCloseTimer=setTimeout(()=>{
     document.getElementById('mv-close-btn').classList.remove('show');
@@ -1161,9 +1134,9 @@ function mvVolChange(val){
   },3000);
 }
 function mvVolMute(){
+  const vid=document.getElementById('mvvid');
   const slider=document.getElementById('mv-vol-slider');
-  const curGain=_mvGainNode?_mvGainNode.gain.value:parseFloat(slider.value)/100;
-  if(curGain===0){
+  if(vid.muted||vid.volume===0){
     const restore=parseInt(slider.dataset.prevVol||'80',10)||80;
     mvVolChange(restore);slider.value=restore;
   } else {
