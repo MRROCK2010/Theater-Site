@@ -996,7 +996,20 @@ function hostUp(name){
   G.isHost=true;
   G.peer.on('open',()=>{document.getElementById('codeval').textContent=code;document.getElementById('codebox').style.display='block';setStat('Waiting for partner…');document.getElementById('mainbtn').disabled=true;document.getElementById('mainbtn').textContent='Waiting…';});
   G.peer.on('connection',conn=>{G.conn=conn;G.partnerPeerId=conn.peer;wireConn(conn);setStat('Partner joined!','ok');setTimeout(startGame,900);});
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;G.mvClosed=false;checkShowMovie();toast('🎬 Partner is sharing screen! Tap the green pill to watch.');});});
+  G.peer.on('call',call=>{
+    // Answer with no local audio/video — we're only receiving, never sending back mic
+    call.answer(new MediaStream());
+    call.on('stream',s=>{
+      // The host already sends a clean stream (window audio only).
+      // As an extra guard, rebuild the stream from the received tracks —
+      // getDisplayMedia audio tracks have kind='audio' and come from the
+      // captured window. There's no mic here since host stripped it.
+      const safeStream=new MediaStream();
+      s.getTracks().forEach(t=>safeStream.addTrack(t));
+      G.remoteStream=safeStream;G.mvClosed=false;checkShowMovie();
+      toast('🎬 Partner is sharing screen! Tap the green pill to watch.');
+    });
+  });
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function joinUp(name){
@@ -1011,7 +1024,16 @@ function joinUp(name){
     conn.on('open',()=>{conn.send({type:'hello',name,gender:G.me.gender});setStat('Connected!','ok');setTimeout(startGame,700);});
     conn.on('error',()=>setStat('Could not connect.','err'));
   });
-  G.peer.on('call',call=>{call.answer();call.on('stream',s=>{G.remoteStream=s;G.mvClosed=false;checkShowMovie();toast('🎬 Partner is sharing screen! Tap the green pill to watch.');});});
+  G.peer.on('call',call=>{
+    // Answer with no local audio/video — receiver only, never sends mic back
+    call.answer(new MediaStream());
+    call.on('stream',s=>{
+      const safeStream=new MediaStream();
+      s.getTracks().forEach(t=>safeStream.addTrack(t));
+      G.remoteStream=safeStream;G.mvClosed=false;checkShowMovie();
+      toast('🎬 Partner is sharing screen! Tap the green pill to watch.');
+    });
+  });
   G.peer.on('error',e=>setStat('Error: '+e.message,'err'));
 }
 function wireConn(conn){
@@ -1163,20 +1185,49 @@ async function toggleShare(){
     closeMv();return;
   }
   try{
-    const s=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:30},audio:{echoCancellation:false,noiseSuppression:false}});
-    G.screenStream=s;G.sharing=true;
+    // Request screen capture — audio:true captures ONLY the shared window/tab audio (no mic)
+    const s=await navigator.mediaDevices.getDisplayMedia({
+      video:{frameRate:30},
+      audio:{
+        echoCancellation:false,
+        noiseSuppression:false,
+        autoGainControl:false,
+        // Suppress mic entirely — only keep display-captured audio
+        suppressLocalAudioPlayback:true
+      }
+    });
+
+    // ── ISOLATE WINDOW AUDIO ONLY ──────────────────────────────
+    // getDisplayMedia audio tracks = ONLY the shared window/tab audio.
+    // We build a clean stream: video track from display + ONLY the
+    // display audio track. This guarantees no mic, no other app audio.
+    const videoTracks = s.getVideoTracks();
+    const displayAudioTracks = s.getAudioTracks(); // these are ONLY from the captured window
+
+    // Build a pure stream with just window video + window audio
+    const cleanStream = new MediaStream();
+    videoTracks.forEach(t => cleanStream.addTrack(t));
+    displayAudioTracks.forEach(t => cleanStream.addTrack(t));
+
+    // If the browser gave no audio (user didn't share tab audio),
+    // show a friendly hint but still proceed with video-only
+    if(displayAudioTracks.length===0){
+      toast('⚠️ No window audio — enable "Share tab audio" in the browser prompt');
+    }
+
+    G.screenStream=cleanStream;G.sharing=true;
     document.getElementById('sharebtn').innerHTML='⏹ <span class="btn-txt">Stop</span>';document.getElementById('sharebtn').classList.add('share-on');
     document.getElementById('mv-reopen').classList.remove('show');
     // Show locally — assign to remoteStream so checkShowMovie picks it up
-    G.remoteStream=s;
+    G.remoteStream=cleanStream;
     checkShowMovie();
-    // Call partner
+    // Call partner with the clean stream (window audio only)
     if(G.conn?.open&&G.partnerPeerId){
       if(G.call){try{G.call.close();}catch(e){}}
-      G.call=G.peer.call(G.partnerPeerId,s);
+      G.call=G.peer.call(G.partnerPeerId,cleanStream);
     }
     // When user stops via browser UI
-    s.getVideoTracks()[0].addEventListener('ended',()=>{if(G.sharing) toggleShare();});
+    videoTracks[0]&&videoTracks[0].addEventListener('ended',()=>{if(G.sharing) toggleShare();});
     toast('🎬 Screen sharing started!');
   }catch(e){if(e.name!=='NotAllowedError')toast('Screen share failed: '+e.message);else toast('Screen share cancelled');}
 }
